@@ -1,0 +1,9 @@
+ipython
+matplotlib
+numpy
+pandas
+seaborn
+tensorflow
+mplfinance
+yfinance
+-e .
