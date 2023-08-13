@@ -1,4 +1,6 @@
 import yfinance as yf
+import mplfinance as mpf
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import os
@@ -12,6 +14,7 @@ from datetime import datetime
 class DataInjectionConfig:
     train_data_path:str = os.path.join('dataset', 'train_dataset.csv')
     last_week_actual_price: str= os.path.join('dataset', 'last_week_actual_price.csv')
+    pictorial_view :str= os.path.join('dataset', 'last_week_actual_price.png')
 
 class DataInjection:
     def __init__(self):
@@ -55,14 +58,23 @@ class DataInjection:
             if nday > 0 or nday < 5:
                 actual= last_df.tail(5+nday)
                 last_actual= actual[:-nday]
+                mpf.plot(last_actual, type='candle', style='charles', volume=True)
+                plt.savefig(self.data_injection.pictorial_view)
                 last_actual.to_csv(self.data_injection.last_week_actual_price)
                 logging.info("last weeks price obtained, updating last week actual price")
                 return self.data_injection.last_week_actual_price
             else:
                 actual=last_df.tail(5)
+                mpf.plot(actual, type='candle', style='charles', volume=True)
+                plt.savefig(self.data_injection.pictorial_view)
                 actual.to_csv(self.data_injection.last_week_actual_price)
                 logging.info("last weeks price obtained, updating last week actual price")
                 return self.data_injection.last_week_actual_price
         except Exception as e:
             raise CustomException(e, sys)
+
+if __name__=="__main__":
+    obj=DataInjection()
+    obj.last_week_actual_price()
         
+
