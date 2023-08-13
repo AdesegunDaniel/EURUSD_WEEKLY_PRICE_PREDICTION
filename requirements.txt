@@ -6,4 +6,7 @@ seaborn
 tensorflow
 mplfinance
 yfinance
+tensorflow.keras
+tensorflow.keras.models
+tensorflow.keras.layers
 -e .
