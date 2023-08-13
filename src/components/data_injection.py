@@ -66,6 +66,3 @@ class DataInjection:
         except Exception as e:
             raise CustomException(e, sys)
         
-if __name__=="__main__":
-    obj=DataInjection()
-    obj.last_week_actual_price()
