@@ -13,6 +13,7 @@ from datetime import datetime
 @dataclass
 class DataInjectionConfig:
     train_data_path:str = os.path.join('dataset', 'train_dataset.csv')
+    pred_step_path:str = os.path.join('dataset', 'pred_step.csv')
     last_week_actual_price: str= os.path.join('dataset', 'last_week_actual_price.csv')
     pictorial_view :str= os.path.join('dataset', 'last_week_actual_price.png')
 
@@ -24,7 +25,7 @@ class DataInjection:
         try:
             logging.info("collect the updated version of data and read to dataframe")
             eurusd = yf.Ticker("EURUSD=X")
-            df = eurusd.history(period="max")
+            df = eurusd.history(start="2003-12-01", end="2023-08-19")
             logging.info("resetting index and droping un-used feature")
             df=df.reset_index()
             df=df.drop(['Volume', 'Dividends', 'Stock Splits'], axis=1)
@@ -40,9 +41,11 @@ class DataInjection:
             logging.info("normalizing the data has commence")
             mean, std = df.mean(), df.std()
             df = (df - mean) / std
+            step_df= df.tail(5)
             logging.info("dataset ready..... saving to train_dataset")
-            os.makedirs(os.path.dirname(self.data_injection.train_data_path), exist_ok=False)
-            df.to_csv(self.data_injection.train_data_path, header=True)
+            os.makedirs(os.path.dirname(self.data_injection.train_data_path), exist_ok=True)
+            df.to_csv(self.data_injection.train_data_path, header=True, index= False)
+            step_df.to_csv(self.data_injection.pred_step_path, header=True, index=False)
             return self.data_injection.train_data_path
         except Exception as e:
             raise CustomException(e,sys)
@@ -58,23 +61,23 @@ class DataInjection:
             if nday > 0 or nday < 5:
                 actual= last_df.tail(5+nday)
                 last_actual= actual[:-nday]
-                mpf.plot(last_actual, type='candle', style='charles', volume=True)
-                plt.savefig(self.data_injection.pictorial_view)
+                mpf.plot(last_actual, type='candle', style='charles', volume=True, savefig=self.data_injection.pictorial_view)
                 last_actual.to_csv(self.data_injection.last_week_actual_price)
                 logging.info("last weeks price obtained, updating last week actual price")
                 return self.data_injection.last_week_actual_price
             else:
                 actual=last_df.tail(5)
-                mpf.plot(actual, type='candle', style='charles', volume=True)
-                plt.savefig(self.data_injection.pictorial_view)
+                mpf.plot(actual, type='candle', style='charles', volume=True, savefig=self.data_injection.pictorial_view)
                 actual.to_csv(self.data_injection.last_week_actual_price)
                 logging.info("last weeks price obtained, updating last week actual price")
                 return self.data_injection.last_week_actual_price
         except Exception as e:
             raise CustomException(e, sys)
 
+
 if __name__=="__main__":
     obj=DataInjection()
-    obj.last_week_actual_price()
-        
+    obj.collect_train_data()
 
+
+        

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>predict</title>
+	<style>
+		table {
+			border-collapse: collapse;
+			width: 100%;
+		}
+
+		th, td {
+			text-align: left;
+			padding: 8px;
+			border-bottom: 1px solid #ddd;
+		}
+
+		tr:hover {
+			background-color:#f5f5f5;
+		}
+	</style>
+</head>
+<body>
+    <h1>WELLCOM TO EURUSD MODEL PRICE PREDICTION</h1>
+    <p style="text-align:left;">The model make use of historical market price to suggest prediction. 
+        Remember that these are just predictions and not guarantees. 
+        The forex market is highly volatile and sometimes unpredictable, and there are many factors
+        that can influence currency prices. The model serves as a good aid that will contribute to you 
+        predictions
+    </p>
+
+    <h2>Next week's market prices prediction table</h2>
+	<table>
+	{{ prediction.to_html()|safe }}
+	</table>
+	<img src={{predictions/latest_prediction.png}} alt="Latest Prediction plot">
+</body>
+</html>
